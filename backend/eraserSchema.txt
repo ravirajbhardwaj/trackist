@@ -1,0 +1,88 @@
+title Task Manager DB design
+notation chen
+colorMode pastel
+typeface mono
+users [icon: user, color: blue, ] {
+  id ObjectId pk
+  avatar string
+  username string @unique
+  email string @unique
+  password string (hashed)
+  role enum[admin, member, viewer]
+  isEmailVerified boolean
+  loginType enum[email, google, github]
+  refreshToken string
+  forgetPasswordToken string
+  forgetPasswordExpiry date
+  emailVarificationToken string
+  emailVarificationExpiry date
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+projects [icon: settings, color: red] {
+  id ObjectId pk
+  name string
+  description string
+  createdBy ObjectId users
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+teamMembers [icon: users, color: green] {
+  id ObjectId pk
+  user ObjectId users
+  project ObjectId projects
+  role enum[]
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+tasks [icon: folder, color: orange] {
+  id ObjectId pk
+  title string
+  description string
+  priority enum[low, medium, high, urgent]
+  project ObjectId projects
+  assignedTo ObjectId users
+  assignedBy ObjectId users
+  status enum[todo, in_progress, done]
+  attachments string[]
+  createdAt timestamp
+  updatedAt timestamp 
+}
+
+subtasks [icon: twitter, color: yellow ] {
+  id ObjectId pk
+  title string
+  task ObjectId tasks
+  isCompleted boolean
+  createdBy ObjectId users
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+notes [icon: file, color: teal] {
+  id ObjectId pk
+  project ObjectId projects
+  createdBy ObjectId users
+  content string
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+// relationship
+// user related
+projects.createdBy > users.id : [color: red]
+teamMembers.user > users.id: [color: green]
+tasks.assignedBy > users.id: [color: orange]
+tasks.assignedTo > users.id: [color: orange]
+notes.createdBy > users.id: [color: teal]
+
+// project related
+teamMembers.project > projects.id: [color: green]
+tasks.project > projects.id: [color: orange]
+notes.project > projects.id: [color: teal]
+
+// task realted
+subtasks.task > tasks.id: [color: yellow]
