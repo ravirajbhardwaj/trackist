@@ -1,6 +1,6 @@
 # 📝 Trackist
 
-**Trackist** is a minimal and modern web app to help you stay consistent, organized, and intentional with your time. Whether you're tracking tasks, daily habits, or personal goals, Trackist keeps everything in one beautiful, distraction-free space.
+**Trackist** is a simple, efficient task management tool built to help individuals and small teams organize, track, and complete tasks with ease. 
 
 ---
 
@@ -15,11 +15,11 @@
 
 - Server Side State Management & Caching using React Query.
 
-- Client Side States Management with Recoil
+- Client Side States Management with Redux.
 
 - Custom Hooks
 
-- Schema Validation using zod.
+- Schema Validation using Express validator.
 
 - Robus Authentication
 
@@ -43,7 +43,7 @@
 
 - [Tailwind CSS](https://tailwindcss.com/) – CSS
 
-- [Redux](https://recoiljs.org/) – state management
+- [Redux](https://redux.js.org/) – state management
 
 - [Tanstack Query](https://tanstack.com/query/latest) – asynchronous state management
 
