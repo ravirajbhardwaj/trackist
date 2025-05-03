@@ -1,8 +1,27 @@
 import express from "express";
+import cors from "cors";
+import path from "path";
 
 const app = express();
 
-app.use(express.json())
+const corsOptions = {
+  origin:
+    process.env.CORS_ORIGIN === "*" ? "*" : process.env.CORS_ORIGIN?.split(","),
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(express.json({ limit: "12kb" }));
+app.use(express.urlencoded({ extended: true, limit: "12kb" }));
+
+const __dirname = path.resolve();
+app.use(
+  express.static(path.join(__dirname, "public"), {
+    maxAge: 3600,
+  })
+);
 
 // import api route
 import healthcheckRouter from "./routes/healthcheck.route.js";
