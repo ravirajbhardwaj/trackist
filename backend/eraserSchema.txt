@@ -1,3 +1,8 @@
+Copy the content of `eraserSchema.txt` into the Eraser editor to visualize the database design. 
+This schema models a task management app with users, projects, team members, tasks, subtasks, and notes.
+
+--- start schema -------------------------------------
+
 title Task Manager DB design
 notation chen
 colorMode pastel
@@ -86,3 +91,5 @@ notes.project > projects.id: [color: teal]
 
 // task realted
 subtasks.task > tasks.id: [color: yellow]
+
+---- end of schema ----------------------------------------------------
