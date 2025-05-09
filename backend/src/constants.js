@@ -58,4 +58,8 @@ export const TeamMemberRolesEnums = {
 
 export const AvailableTeamMemberRoles = Object.values(TeamMemberRolesEnums);
 
+export const USER_TEMPORARY_TOKEN_EXPIRY = 10 * 60 * 1000; // 10m
+
+export const USER_COOKIE_TOKEN_EXPIRY = 15 * 60 * 100; // 15m
+
 export const DB_NAME = "trackist";
