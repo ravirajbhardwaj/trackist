@@ -1,6 +1,6 @@
 import Mailgen from "mailgen";
 import nodemailer from "nodemailer";
-import logger from "../logger/wiston.logger.js";
+import logger from "../logger/winston.logger.js";
 
 /**
  *
