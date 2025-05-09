@@ -3,13 +3,6 @@ import { AvailableUserRoles } from "../constants.js";
 
 const userRegisterValidator = () => {
   return [
-    body("fullname")
-      .trim()
-      .notEmpty()
-      .withMessage("Fullname is required")
-      .isLength({ max: 12 })
-      .withMessage("Fullname must be at most 12 characters long"),
-
     body("username")
       .trim()
       .notEmpty()
