@@ -3,6 +3,6 @@ import {} from "../controllers/task.controller.js";
 
 const router = Router();
 
-router.route("/").get();
+router.route("/");
 
 export default router;

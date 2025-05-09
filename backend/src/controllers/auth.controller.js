@@ -29,13 +29,11 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // Retrieves the user image from the request file.
-  const avatar = req.file;
-  const avatarLocalPath = avatar?.path;
-
+  const avatar = req.file?.path;
   let imageKitAvatar;
 
-  if (avatarLocalPath) {
-    imageKitAvatar = await uploadToImageKit(avatarLocalPath);
+  if (avatar) {
+    imageKitAvatar = await uploadToImageKit(avatar, `avatar_${Date.now()}.jpg`);
   } else {
     // Set a default avatar URL if no avatar is provided
     imageKitAvatar = { url: "https://i.pravatar.cc/300" };
@@ -43,7 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // If the user does not exist, proceed to create a new user
   const user = await User.create({
-    avatar: { path: imageKitAvatar.url },
+    avatar: { url: imageKitAvatar.url },
     username,
     email,
     password,
@@ -63,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // Send a verification email to the user with a link to verify their email address
   await sendMail({
-    email: user?.eamil,
+    email: user?.email,
     subject: "Please verify your email",
     mailgenContent: emailVerificationMailgenContent(
       user?.username,

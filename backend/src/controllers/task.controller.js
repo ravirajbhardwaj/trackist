@@ -24,10 +24,4 @@ const deleteTask = asyncHandler(async (req, res) => {
   // delete task
 });
 
-export {
-  createTask,
-  deleteTask,
-  getTaskById,
-  getTasks,
-  updateTask,
-};
+export { createTask, deleteTask, getTaskById, getTasks, updateTask };
