@@ -7,19 +7,54 @@ title Task Manager DB design
 notation chen
 colorMode pastel
 typeface mono
+
+enum UserRole [icon: user, color: blue] {
+  ADMIN: "ADMIN"
+  MEMBER: "MEMBER"
+  VIEWER: "VIEWER"
+}
+
+enum LoginType [icon: user, color: blue] {
+  EMAIL: "EMAIL"
+  GOOGLE: "GOOGLE"
+}
+
+enum Priority [icon: folder, color: orange] {
+  LOW: "LOW"
+  MEDIUM: "MEDIUM"
+  HIGH: "HIGH"
+  URGENT: " URGENT"
+}
+
+enum Status [icon: folder, color: orange] {
+  TODO: "TODO"
+  IN_PROGRESS: "IN_PROGRESS"
+  DONE: "DONE"
+}
+
+enum Members [icon: users, color: green] {
+  LEADER: "LEADER"
+  MANAGER: "MANAGER"
+  DEVELOPER: "DEVELOPER"
+  DESIGNER: "DESIGNER"
+  TESTER: "TESTER"
+  INTERN: "INTERN"
+  CONTRIBUTOR: "CONTRIBUTOR"
+}
+
 users [icon: user, color: blue, ] {
   id ObjectId pk
   avatar string
   username string @unique
   email string @unique
   password string (hashed)
-  role enum[admin, member, viewer]
-  isEmailVerified boolean
-  loginType enum[email, google, github]
+  role UserRole (default: USER)
+  isEmailVerified boolean (default: false)
+  loginType LoginType (default: EMAIL)
   refreshToken string
-  forgetPasswordToken string
+  forgetPasswordToken string (hashed)
   forgetPasswordExpiry date
-  emailVarificationToken string
+  emailVarificationToken string (hashed)
   emailVarificationExpiry date
   createdAt timestamp
   updatedAt timestamp
@@ -38,7 +73,7 @@ teamMembers [icon: users, color: green] {
   id ObjectId pk
   user ObjectId users
   project ObjectId projects
-  role enum[]
+  role Members default(LEADER)
   createdAt timestamp
   updatedAt timestamp
 }
@@ -47,11 +82,11 @@ tasks [icon: folder, color: orange] {
   id ObjectId pk
   title string
   description string
-  priority enum[low, medium, high, urgent]
+  priority Priority @default(HIGH)
   project ObjectId projects
   assignedTo ObjectId users
   assignedBy ObjectId users
-  status enum[todo, in_progress, done]
+  status Status @default(todo)
   attachments string[]
   createdAt timestamp
   updatedAt timestamp 
@@ -61,7 +96,7 @@ subtasks [icon: twitter, color: yellow ] {
   id ObjectId pk
   title string
   task ObjectId tasks
-  isCompleted boolean
+  isCompleted boolean default(false)
   createdBy ObjectId users
   createdAt timestamp
   updatedAt timestamp
