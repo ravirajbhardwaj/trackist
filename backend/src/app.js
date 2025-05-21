@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -15,6 +16,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "12kb" }));
 app.use(express.urlencoded({ extended: true, limit: "12kb" }));
+app.use(cookieParser());
 
 const __dirname = path.resolve();
 app.use(
