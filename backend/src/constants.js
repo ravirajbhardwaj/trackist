@@ -10,7 +10,7 @@ export const UserRolesEnum = {
 export const AvailableUserRoles = Object.values(UserRolesEnum);
 
 /**
- * @type {{GOOGLE: "GOOGLE", GITHUB: "GITHUB", EMAIL: "EMAIL"} as const}
+ * @type {{GITHUB: "GITHUB", EMAIL: "EMAIL"} as const}
  */
 export const LoginTypesEnum = {
   GITHUB: "GITHUB",
