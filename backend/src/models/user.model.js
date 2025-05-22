@@ -42,7 +42,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: AvailableUserRoles,
-      default: UserRolesEnum.ADMIN,
+      default: UserRolesEnum.MEMBER,
       required: true,
     },
     isEmailVerified: {

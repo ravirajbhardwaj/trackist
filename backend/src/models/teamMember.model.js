@@ -1,5 +1,8 @@
 import mongoose, { Schema } from "mongoose";
-import { AvailableTeamMemberRoles, TeamMemberRolesEnums } from "../constants";
+import {
+  AvailableTeamMemberRoles,
+  TeamMemberRolesEnums,
+} from "../constants.js";
 
 const teamMemberSchema = new Schema(
   {
@@ -20,4 +23,4 @@ const teamMemberSchema = new Schema(
   { timestamps: true }
 );
 
-export const TeamMember = mongoose.model("TeamMembers", teamMemberSchema);
+export const TeamMember = mongoose.model("TeamMember", teamMemberSchema);
