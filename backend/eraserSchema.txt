@@ -16,7 +16,7 @@ enum UserRole [icon: user, color: blue] {
 
 enum LoginType [icon: user, color: blue] {
   EMAIL: "EMAIL"
-  GOOGLE: "GOOGLE"
+  GITHUB: "GITHUB"
 }
 
 enum Priority [icon: folder, color: orange] {
@@ -60,7 +60,7 @@ users [icon: user, color: blue, ] {
   updatedAt timestamp
 }
 
-projects [icon: settings, color: red] {
+projects [icon: folder, color: red] {
   id ObjectId pk
   name string
   description string
@@ -78,21 +78,21 @@ teamMembers [icon: users, color: green] {
   updatedAt timestamp
 }
 
-tasks [icon: folder, color: orange] {
+tasks [icon: workflow, color: orange] {
   id ObjectId pk
   title string
   description string
-  priority Priority @default(HIGH)
+  priority Priority @default(MEDIUM)
   project ObjectId projects
   assignedTo ObjectId users
   assignedBy ObjectId users
-  status Status @default(todo)
+  status Status @default(TODO)
   attachments string[]
   createdAt timestamp
   updatedAt timestamp 
 }
 
-subtasks [icon: twitter, color: yellow ] {
+subtasks [icon: api, color: yellow ] {
   id ObjectId pk
   title string
   task ObjectId tasks
