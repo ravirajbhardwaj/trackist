@@ -6,7 +6,27 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import mongoose from "mongoose";
 
 const getNotes = asyncHandler(async (req, res) => {
-  // get all notes
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const [notes, totalNotes] = await Promise.all([
+    Note.find().skip(skip).limit(limit),
+    Note.countDocuments(),
+  ]);
+
+  if (!notes || notes.length === 0) {
+    throw new ApiError(404, "No Notes found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, "Notes fetched successfully", {
+      totalNotes,
+      totalPages: Math.ceil(totalNotes / limit),
+      currentPage: page,
+      notes,
+    })
+  );
 });
 
 const getNoteById = asyncHandler(async (req, res) => {
@@ -16,10 +36,9 @@ const getNoteById = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Project & Note id is required");
   }
 
-  const note = await Note.findById(noteId).populate(
-    "createdBy",
-    "username role avatar"
-  );
+  const note = await Note.findOne({
+    $and: [{ project: projectId }, { _id: noteId }],
+  }).populate("createdBy", "username role avatar");
 
   if (!note) {
     throw new ApiError(404, "Note not found");
@@ -34,7 +53,7 @@ const createNote = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
   const { content } = req.body;
 
-  if (!projectId && !content) {
+  if (!projectId || !content) {
     throw new ApiError(400, "Project id and content is required");
   }
 
@@ -44,13 +63,13 @@ const createNote = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Project not found");
   }
   const note = await Note.create({
-    project: mongoose.Types.ObjectId(projectId),
+    project: new mongoose.Types.ObjectId(projectId),
     content,
-    createdBy: mongoose.Types.ObjectId(req.user._id),
+    createdBy: new mongoose.Types.ObjectId(req.user._id),
   });
 
   const populatedNote = await Note.findById(note._id).populate(
-    "createBy",
+    "createdBy",
     "username role avatar"
   );
 
@@ -67,16 +86,19 @@ const updateNote = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Project & Note id and content is required");
   }
 
-  const existedNote = await Note.findById(noteId);
+  const existedNote = await Note.findOne({
+    $and: [{ project: projectId }, { _id: noteId }],
+  });
 
   if (!existedNote) {
     throw new ApiError(404, "Note does not exist");
   }
+
   const note = await Note.findByIdAndUpdate(
     noteId,
     { content },
     { new: true }
-  ).populate("createBy", "username role avatar");
+  ).populate("createdBy", "username role avatar");
 
   return res
     .status(200)
@@ -96,7 +118,9 @@ const deleteNote = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Note does not exist");
   }
 
-  return res.status(200).json(200, "Note delete successfully", deletedNote);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Note delete successfully", deletedNote));
 });
 
 export { createNote, deleteNote, getNoteById, getNotes, updateNote };
