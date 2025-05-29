@@ -1,11 +1,10 @@
 # 📝 Trackist
 
-**Trackist** is a simple, efficient task management tool built to help individuals and small teams organize, track, and complete tasks with ease. 
+**Trackist** is a simple, efficient task management tool built to help individuals and small teams organize, track, and complete tasks with ease.
 
 ---
 
 ## ✨ Features
-
 
 - Organized File and Folder Structure
 
@@ -59,156 +58,155 @@
 
 ## 🏁 Installation
 
-##  Models
+## Models
 
 Schema: [eraserSchema.txt](./backend/eraserSchema.txt)
 
 ![DB Design](./assets/images/eraserSchema.svg)
 
-
-## <a name="docker-setup"> 🐳&nbsp;&nbsp; Quick Start with Docker</a>
+### 2. Install dependencies
 
 0. **Prerequisites**
 
-   Make sure you have the [Docker](https://www.docker.com/) installed on your machine.
+Make sure you have the following installed on your machine:
+
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/en)
+- [npm](https://www.npmjs.com/) (Node Package Manager)
 
 1. **Clone the repository:**
 
-   ```bash
-   git clone https://github.com/ravirajbhardwaj/trackist.git
-   ```
+```bash
+  git clone https://github.com/ravirajbhardwaj/trackist.git
+```
 
 2. **Navigate to the project directory:**
 
-   ```bash
-   cd trackist
-   ```
+```bash
+cd trackist
+npm install
+```
 
-3. **Add Environment Variables:**
+### 3. Set up environment variables
 
-   Create `.env` files in the server and client folder and copy paste the content of `.env.sample`
+Create `.env` files in the server and client folder and copy paste the content of `.env.sample`
 
-   ```bash
-   # server side
-   cd backend
-   cp .env.sample .env # then update `.env` with your creadentials.
-   cd ..
+```bash
+# server side
+cd backend
+cp .env.eample .env # then update `.env` with your creadentials.
+cd ..
 
-   # client side
-   cd frontend
-   cp .env.smaple .env # then update `.env` if required.
-   cd ..
-   ```
+# client side
+cd frontend
+cp .env.emaple .env # then update `.env` if required.
+cd ..
+```
 
-4. **Start all services using Docker Compose:**
+---
 
-   ```bash
-   docker-compose up --watch
+This project requires setting up environment variables and generating key pairs for authentication.
 
-   # --watch to Enable Watch (For Live Update aka Hot Reloading)
-   ```
+1. Create a `secrets` directory at the root of the project:
 
-<br>
+```bash
+mkdir secrets
+```
 
-## <a name="manual-setup"> 🖥️&nbsp;&nbsp; Manual Setup</a>
+---
 
-0.  **Prerequisites** <br>
-    Make sure you have the following installed on your machine:
+2. Inside the `secrets` directory, create two files:
 
-    - [Git](https://git-scm.com/)
-    - [Node.js](https://nodejs.org/en)
-    - [npm](https://www.npmjs.com/) (Node Package Manager)
+- `private.pem`: This will store the private key.
+- `public.pem`: This will store the public key.
 
-1.  **Clone the repository:**
+3. Generate a public and private key pair. You can use the following command to generate them:
 
-    ```bash
-    git clone https://github.com/ravirajbhardwaj/trackist.git
-    ```
+✅ 1. Generate Private Key (private.pem)
 
-2.  **Navigate to the project directory:**
+```bash
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+```
 
-    ```bash
-    cd trackist
-    ```
+- -algorithm RSA → We are using RSA algorithm.
+- rsa_keygen_bits:2048 → Sets key size to 2048 bits (standard secure size).
+- This generates `private.pem`.
+- The private key is used to sign the JWTs, ensuring that only the server can create valid tokens.
+- The private key should be kept secret and secure, as it is used to sign the JWTs.
 
-3.  **Setup Backend:**
+✅ 2. Extract Public Key (public.pem) from Private Key
 
-    - **Navigate to the Backend Codebase:**
+```bash
+openssl rsa -pubout -in private.pem -out public.pem
+```
 
-      ```bash
-      cd backend/
-      ```
+- -pubout → Extracts the public key from the private key.
+- -in private.pem → Specifies the input file (private key).
+- -out public.pem → Specifies the output file (public key).
+- This generates `public.pem`.
+- The public key is derived from the private key, allowing you to share it without compromising security.
+- The private key should be kept secret and secure, while the public key can be shared with anyone who needs to verify the JWTs signed with the private key.
+- The public key is used to verify the JWTs, ensuring that they were signed by the server and have not been tampered with.
 
-    - **Install dependencies:**
+---
 
-      ```bash
-      npm install
-      ```
+### 4. This section provides instructions to start the database container using Docker Compose.
 
-    - **Add Environment Variables:**
+Prerequisites:
 
-      Create `.env` file in the root folder and copy paste the content of `.env.sample`
+- Ensure Docker and Docker Compose are installed on your system..
 
-      ```bash
-      cp .env.sample .env
-      ```
+Steps to start the database container:
 
-      Update credentials in `.env` with your creadentials.
+1. Open a terminal or command prompt.
+2. Navigate to the directory containing the `compose.yml` file.
+3. Run the following command to start the database container in detached mode:
 
-    - **Start the Server:**
+```bash
+docker-compose up -d
+```
 
-      ```bash
-      npm start
-      ```
+4. Confirm that the container is running by executing:
 
-    - **Explore the API:**
+```bash
+docker ps
+```
 
-      Access the project APIs at the specified endpoints using [API Docs]().
+5. To stop the container, use:
 
-4.  **Setup Frontend:**
+```bash
+docker-compose down
+```
 
-    - **Navigate to the Frontent Codebase:**
+---
 
-      ```bash
-      cd frontend/
-      ```
+#### 5. Use the following commands to run the project:
 
-    - **Install dependencies:**
+- **Start the frontend app:**
 
-      ```bash
-      npm install
-      ```
+  ```bash
+  cd frontend
+  npm install
+  npm run dev
+  ```
 
-    - **Add Environment Variables:**
+- **Start the backend server:**
 
-      Create `.env` file in the root folder and copy paste the content of `.env.sample`
+  ```bash
+  cd ../backend
 
-      ```bash
-      cp .env.sample .env
-      ```
+  npm start
+  ```
 
-      If required, update necessary credentials.
+- **Open app in browser:**
 
-    - **Start the frontend app:**
+Visit [https://localhost:5173](https://localhost:5173) to access frontent.
 
-      ```bash
-      npm run dev
-      ```
+- **Explore the API:**
 
-    - **Start the backend server:**
+  Access the project APIs at the specified endpoints using [API Docs]().
 
-      ```bash
-      cd ../backend
-      npm start
-      ```
-
-    - **Open app in browser:**
-
-      Visit [https://localhost:5173](https://localhost:5173) to access frontent.
-
-<br>
-
-<br>
+---
 
 ## 🤝&nbsp;&nbsp;Contributing
 
