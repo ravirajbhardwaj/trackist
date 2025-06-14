@@ -11,12 +11,17 @@ import {
   getTaskById,
   getTasks,
   toggleSubTaskCompletion,
-  toggleTaskCompletion,
   updateSubtask,
   updateTask,
 } from "../controllers/task.controller.js";
-import { verifyAccessToken } from "../middlewares/auth.middleware.js";
+import {
+  verifyAccessToken,
+  verifyPermission,
+} from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { UserRolesEnum } from "../constants.js";
+import { validate } from "../validators/validate.js";
+import { taskCreateAndUpdateValidator } from "../validators/task.validator.js";
 
 const router = Router();
 
@@ -24,32 +29,80 @@ const router = Router();
 router
   .route("/")
   .get(verifyAccessToken, getTasks)
-  .post(verifyAccessToken, upload.single("attachments"), createTask);
+  .post(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    taskCreateAndUpdateValidator(),
+    validate,
+    createTask
+  );
 
 router
   .route("/:taskId")
   .get(verifyAccessToken, getTaskById)
-  .put(verifyAccessToken, updateTask)
-  .delete(verifyAccessToken, deleteTask);
+  .put(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    taskCreateAndUpdateValidator(),
+    validate,
+    updateTask
+  )
+  .delete(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    deleteTask
+  );
 
 // Subtask routes
 router
   .route("/:taskId/subtasks")
   .get(verifyAccessToken, getSubtasks)
-  .post(verifyAccessToken, createSubtask);
+  .post(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    createSubtask
+  );
 
 router
   .route("/:taskId/subtasks/:subtaskId")
   .get(verifyAccessToken, getSubtaskById)
-  .put(verifyAccessToken, updateSubtask)
-  .delete(verifyAccessToken, deleteSubtask);
+  .put(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    updateSubtask
+  )
+  .delete(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    deleteSubtask
+  );
 
 // Toggle completion status of task or subtask
-router.put("/:taskId/toggle", toggleTaskCompletion);
-router.put("/:taskId/subtasks/:subtaskId/toggle", toggleSubTaskCompletion);
+router
+  .route("/:taskId/subtasks/:subtaskId/toggle")
+  .put(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    toggleSubTaskCompletion
+  );
 
 // Attachment routes
-router.post("/:taskId/attachments", addAttachments);
-router.delete("/:taskId/attachments", deleteAttachments);
+router
+  .route("/:taskId/attachments")
+  .post(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    upload.single("attachments"),
+    addAttachments
+  );
+
+router
+  .route("/:taskId/attachments")
+  .delete(
+    verifyAccessToken,
+    verifyPermission([UserRolesEnum.ADMIN]),
+    upload.single("attachments"),
+    deleteAttachments
+  );
 
 export default router;
