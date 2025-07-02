@@ -42,9 +42,7 @@
 
 - [Tailwind CSS](https://tailwindcss.com/) – CSS
 
-- [Redux](https://redux.js.org/) – state management
-
-- [Tanstack Query](https://tanstack.com/query/latest) – asynchronous state management
+- [Zustand](https://zustand-demo.pmnd.rs/) – state management
 
 - [Mongoose](https://mongoosejs.com/) – ODM
 
