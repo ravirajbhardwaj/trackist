@@ -4,56 +4,15 @@
 
 ---
 
-## ✨ Features
-
-- Organized File and Folder Structure
-
-- Fully Responsive Design
-
-- Well-organized & intuitive UI
-
-- Server Side State Management & Caching using React Query.
-
-- Client Side States Management with Redux.
-
-- Custom Hooks
-
-- Schema Validation using Express validator.
-
-- Robus Authentication
-
-- Google SSO (Single Sign-On)
-
-- Security Measures like rate limiting and referesh tokens.
-
-- Documentation with local development setup guide.
-
-- Dark and Light Mode
-
 ## 🛠️ Tech Stack
-
-- [MongoDB](https://www.mongodb.com/) – database
-
-- [Express](https://expressjs.com/) – framework
-
-- [React](https://react.dev/) – frontend
-
-- [Node.js](https://nodejs.org/) – JavaScript runtime
-
-- [Tailwind CSS](https://tailwindcss.com/) – CSS
-
-- [Zustand](https://zustand-demo.pmnd.rs/) – state management
-
-- [Mongoose](https://mongoosejs.com/) – ODM
-
-- [Git](https://git-scm.com/) – versioning
-
-- [Docker](https://www.docker.com/) – containerziation
-
-- [Vite](https://vitejs.dev/) – building
-
-- [Vercel](https://vercel.com/) – deployments
-
+[![Node.js](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-000000.svg?logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/PostgreSQL-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Mongoose](https://img.shields.io/badge/Prisma-3982CE.svg?logo=Prisma&logoColor=white)](https://www.prisma.io/)
+[![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5.svg?logo=cloudinary&logoColor=white)](https://cloudinary.com/)
+[![Nodemailer](https://img.shields.io/badge/Nodemailer-3B82F6.svg?logo=nodemailer&logoColor=white)](https://nodemailer.com/)
+[![JWT](https://img.shields.io/badge/JWT-000000.svg?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+- [React](https://react.dev/) | [Tailwind CSS](https://tailwindcss.com/) | [Zustand](https://zustand-demo.pmnd.rs/)
 ## 🏁 Installation
 
 ## Models
