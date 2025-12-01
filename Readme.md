@@ -1,28 +1,29 @@
-# 📝 Trackist
+<h2 align="center">Trackist 📝<h2/>
 
-**Trackist** is a simple, efficient task management tool built to help individuals and small teams organize, track, and complete tasks with ease.
+<div align="center">
 
----
+[![X Badge](https://img.shields.io/badge/-@eravitw-1ca0f1?style=social&labelColor=red&logo=x&logoColor=black&link=https://x.com/eravitw)](https://x.com/eravitw) &nbsp;
+[![Mail Badge](https://img.shields.io/badge/-ravirajbhardwaaj@gmail.com-c0392b?style=flat&labelColor=c0392b&logo=gmail&logoColor=white)](mailto:ravirajbhardwaaj@gmail.com) &nbsp;
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org) &nbsp;
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-## 🛠️ Tech Stack
-[![Node.js](https://img.shields.io/badge/Node.js-43853D.svg?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-000000.svg?logo=express&logoColor=white)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/-MongoDB-13aa52?style=for-the-badge&logo=mongodb&logoColor=white)]()
-[![Mongoose](https://img.shields.io/badge/Made_with-Mongoose-880000?&logo=mongodb)]()
-[![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5.svg?logo=cloudinary&logoColor=white)](https://cloudinary.com/)
-[![Nodemailer](https://img.shields.io/badge/Nodemailer-3B82F6.svg?logo=nodemailer&logoColor=white)](https://nodemailer.com/)
-[![JWT](https://img.shields.io/badge/JWT-000000.svg?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
-[![React](https://img.shields.io/badge/-ReactJs-61DAFB?logo=react&logoColor=white&style=for-the-badge)]()
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)]()
-[![Zustand](https://img.shields.io/badge/zustand-602c3c?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAA8FBMVEVHcExXQzpKQDlFV16lpqyGh4tPPTdWT0weHRU7LRZGQzmxYjlaTkZsbmywVyxtXDSFhISXm6WWpcaytb6bm56gprY0LiiXmp2prLamsMa0XS42MSxkTUVDSkuyYzGihXdDV2GprbmedVxaRD1kTUWUdGFGOCN4a2OfpbI0SFFAMSddTkbCc0dWQiGFRypXQyJUQCBcTTWviDVXQyJcUDjlqCWxjkG+hBTiohtURD6lr8lORTtDVVZmPyxwSipaRSJDOzaWpsyYqMyYqM2dq8tPOjBERTs6QUKTcCeKaCJvViZdSDK4iSngoiDvqx7KkRuGEi1hAAAAOXRSTlMApZ78cB8hCAMQO/j/FOH4KlT1wFfJTjaY6SxtVexFn3Tn2sN6d671mVuJ+/PPN9CT6TfpS4C9jJaVLRihAAAAi0lEQVQIHXXBxRKCUAAF0Es/QMDubsVuGrv1///GBQ4bx3PwgwC8gFCRohs8QrQV0ZtKOZ9JcgBmU8MwqFa9kjNTUWB58f2jPOjU9juTBTbPq+vIar972MZjwPr1uDvqCFw2wQpQVm/t7Oo9gAgAFtrtZNtMFQFp7nkWU5IQECfjYbuQFvBFRJHgjw9L0A80UmaGpAAAAABJRU5ErkJggg==)]()
- 
-## 🏁 Installation
 
-## Models
+Trackist is a simple, efficient task management tool built to help individuals and small teams organize, track, and complete tasks with ease.
+</div>
 
-Schema: [eraserSchema.txt](./backend/eraserSchema.txt)
+<h2 align="center"> TECH STACK<h2/>
+<p align="center">
+  <a href="README.md">
+    <img
+      src="https://go-skill-icons.vercel.app/api/icons?i=nodejs,express,mongodb,mongoose,jwt,react,tailwind,zustand,reactrouter" alt="tech stack"
+    />
+  </a>
+</p>
+
+<h2 align="center">Installation<h2/>
 
 ![DB Design](./assets/images/eraserSchema.svg)
+[eraserSchema.txt](./backend/eraserSchema.txt)
 
 ### 2. Install dependencies
 
@@ -110,37 +111,7 @@ openssl rsa -pubout -in private.pem -out public.pem
 
 ---
 
-### 4. This section provides instructions to start the database container using Docker Compose.
-
-Prerequisites:
-
-- Ensure Docker and Docker Compose are installed on your system..
-
-Steps to start the database container:
-
-1. Open a terminal or command prompt.
-2. Navigate to the directory containing the `compose.yml` file.
-3. Run the following command to start the database container in detached mode:
-
-```bash
-docker-compose up -d
-```
-
-4. Confirm that the container is running by executing:
-
-```bash
-docker ps
-```
-
-5. To stop the container, use:
-
-```bash
-docker-compose down
-```
-
----
-
-#### 5. Use the following commands to run the project:
+#### 4. Use the following commands to run the project:
 
 - **Start the frontend app:**
 
