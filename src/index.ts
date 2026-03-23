@@ -1,13 +1,11 @@
-import dotenv from "dotenv";
-import { app } from "./app";
-import { logger } from "./logger/pino.logger";
+import app from './app'
+import { logger } from './logger/pino.logger'
 
-dotenv.config({
-  path: "./.env",
-});
+const PORT = Number(process.env.PORT) || 8080
 
-const PORT = Number(process.env.PORT) || 8080;
+const server = Bun.serve({
+  port: PORT,
+  fetch: app.fetch,
+})
 
-app.listen(PORT, () =>
-  logger.info(`Server is running at: ${process.env.SERVER_URL}`)
-);
+logger.info(`API is running at: ${server.url}api/v1`)
