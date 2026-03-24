@@ -2,10 +2,13 @@ import { Hono } from 'hono'
 import { every } from 'hono/combine'
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
+import { Prisma } from './generated/prisma/client'
 import { logger } from './logger/pino.logger'
 // import all routes
 import UserRouter from './routes/user'
 import wellKnownRouter from './routes/well-know'
+import { ApiError } from './utils/http'
 
 const allowsOrigins = ['http://localhost:5173'] // Allowed by CORS
 
@@ -36,7 +39,6 @@ const app = new Hono({
       req: {
         method: c.req.method,
         path: c.req.path,
-        ip: c.req.header('x-forwarded-for') || 'unknown',
         userAgent: c.req.header('user-agent'),
       },
       res: {
@@ -52,8 +54,22 @@ const app = new Hono({
   .notFound(c => {
     return c.json({ message: 'Not found' }, 404)
   })
-  .onError((_, c) => {
-    return c.json({ message: 'Something went wrong' }, 500)
+  .onError((err, c) => {
+    let apiError: ApiError
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      apiError = new ApiError(400, "DATABASE ERROR")
+    } else if (err instanceof ApiError) {
+      apiError = err
+    } else {
+      apiError = new ApiError(500, err.message || "INTERNAL SERVER ERROR")
+    }
+
+    return c.json({
+      code: apiError.statusCode,
+      message: apiError.message,
+      data: apiError.data,
+      success: apiError.success
+    }, apiError.statusCode as ContentfulStatusCode)
   })
 
 export type AppType = typeof app
