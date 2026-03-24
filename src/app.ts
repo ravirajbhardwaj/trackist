@@ -57,10 +57,13 @@ const app = new Hono({
   .onError((err, c) => {
     let apiError: ApiError
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      logger.error(err)
       apiError = new ApiError(400, "DATABASE ERROR")
     } else if (err instanceof ApiError) {
+      logger.error(err)
       apiError = err
     } else {
+      logger.error(err)
       apiError = new ApiError(500, err.message || "INTERNAL SERVER ERROR")
     }
 
