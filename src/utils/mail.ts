@@ -1,97 +1,57 @@
-import Mailgen from "mailgen";
-import nodemailer from "nodemailer";
-import { logger } from "../logger/pino.logger";
+import { Resend } from 'resend'
+import { logger } from '@/logger/pino.logger'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 interface Options {
-  email: string,
-  subject: string,
-  mailgenContent: Mailgen.Content,
+  email: string
+  subject: string
+  html: string
 }
 /**
- * Sends an email using Mailgen and Nodemailer.
- * @param {{email: string; subject: string; mailgenContent: Mailgen.Content; }} options
+ * Sends an email using Resend API
+ * @param {{email: string; subject: string; html: string; }} options
  */
 const sendMail = async (options: Options) => {
-  const mailGenerator = new Mailgen({
-    theme: "default",
-    product: {
-      name: "AuthAPI",
-      link: process.env.CLIENT_URL || "https://127.0.1.1:8080",
-    },
-  });
-
-  const emailTextual = mailGenerator.generate(options?.mailgenContent);
-  const emailHtml = mailGenerator.generate(options.mailgenContent);
-
-  const transporter = nodemailer.createTransport({
-    host: process.env.MAILTRAP_SMTP_HOST || "",
-    port: parseInt(process.env.MAILTRAP_SMTP_PORT || "587", 10),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.MAILTRAP_SMTP_USER,
-      pass: process.env.MAILTRAP_SMTP_PASS,
-    },
-  } as any
-  );
-
-  const mail = {
-    from: "mail",
-    to: options.email,
-    subject: options.subject,
-    text: emailTextual,
-    html: emailHtml,
-  };
-
   try {
-    await transporter.sendMail(mail);
+    await resend.emails.send({
+      from: 'AuthAPI <onboarding@resend.dev>',
+      to: options.email,
+      subject: options.subject,
+      html: options.html,
+    })
   } catch (error) {
-    logger.error(
-      `Failed to send email. Please verify your MAILTRAP environment variables ${error}`
-    );
+    logger.error(`Email failed: ${error}`)
   }
-};
+}
 
-const emailVerificationMailgenContent = (username: string, verificationUrl: string) => {
-  return {
-    body: {
-      name: username,
-      intro: "Thank you for signing up! We're excited to have you on board.",
-      action: {
-        instructions:
-          "Please confirm your email address by clicking the button below:",
-        button: {
-          color: "#FFA500",
-          text: "Verify your email",
-          link: verificationUrl,
-        },
-      },
-      outro:
-        "Need help or have questions? Just reply to this email, and we'll be happy to assist you.",
-    },
-  };
-};
+const emailVerificationTemplate = (username: string, verificationUrl: string) => {
+  return `
+    <div style="font-family:sans-serif">
+      <h2>Hello ${username},</h2>
+      <p>Thanks for signing up 🎉</p>
+      <p>Please verify your email:</p>
+      <a href="${verificationUrl}" 
+         style="background:#FFA500;color:white;padding:10px 15px;text-decoration:none;border-radius:5px;">
+         Verify Email
+      </a>
+      <p>If you didn’t sign up, ignore this.</p>
+    </div>
+  `
+}
 
-const forgotPasswordMailgenContent = (username: string, passwordResetUrl: string) => {
-  return {
-    body: {
-      name: username,
-      intro: "You have requested to reset your password.",
-      action: {
-        instructions: "To reset your password, please click the button below:",
-        button: {
-          color: "#FFA500",
-          text: "Reset your password",
-          link: passwordResetUrl,
-        },
-      },
-      outro:
-        "If you did not request a password reset, please ignore this email or contact support if you have questions.",
-    },
-  };
-};
+const forgotPasswordTemplate = (username: string, resetUrl: string) => {
+  return `
+    <div style="font-family:sans-serif">
+      <h2>Hello ${username},</h2>
+      <p>You requested a password reset.</p>
+      <a href="${resetUrl}" 
+         style="background:#FFA500;color:white;padding:10px 15px;text-decoration:none;border-radius:5px;">
+         Reset Password
+      </a>
+      <p>If you didn’t request this, ignore this email.</p>
+    </div>
+  `
+}
 
-export {
-  sendMail,
-  emailVerificationMailgenContent,
-  forgotPasswordMailgenContent,
-};
+export { emailVerificationTemplate, forgotPasswordTemplate, sendMail }
