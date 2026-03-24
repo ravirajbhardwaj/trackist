@@ -1,12 +1,12 @@
-import { logger } from "../logger/pino.logger";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../generated/prisma/client";
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@/generated/prisma/client'
+import { logger } from '@/logger/pino.logger'
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
 
 const prismaClientSingleton = () => {
-  return new PrismaClient({ adapter });
-};
+  return new PrismaClient({ adapter })
+}
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
 
@@ -20,12 +20,12 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 async function connectPrisma() {
   try {
-    await prisma.$connect();
-    logger.info("Prisma connected to the database");
+    await prisma.$connect()
+    logger.info('Prisma connected to the database')
   } catch (error) {
-    logger.error(`Prisma failed to connect to the database ${error}`);
-    process.exit(1);
+    logger.error(`Prisma failed to connect to the database ${error}`)
+    process.exit(1)
   }
 }
 
-connectPrisma();
+connectPrisma()
