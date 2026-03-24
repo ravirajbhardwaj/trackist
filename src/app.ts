@@ -1,9 +1,9 @@
+import { DrizzleError } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { every } from 'hono/combine'
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
-import { Prisma } from './generated/prisma/client'
 import { logger } from './logger/pino.logger'
 // import all routes
 import UserRouter from './routes/user'
@@ -56,23 +56,26 @@ const app = new Hono({
   })
   .onError((err, c) => {
     let apiError: ApiError
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err instanceof DrizzleError) {
       logger.error(err)
-      apiError = new ApiError(400, "DATABASE ERROR")
+      apiError = new ApiError(400, 'DATABASE ERROR')
     } else if (err instanceof ApiError) {
       logger.error(err)
       apiError = err
     } else {
       logger.error(err)
-      apiError = new ApiError(500, err.message || "INTERNAL SERVER ERROR")
+      apiError = new ApiError(500, err.message || 'INTERNAL SERVER ERROR')
     }
 
-    return c.json({
-      code: apiError.statusCode,
-      message: apiError.message,
-      data: apiError.data,
-      success: apiError.success
-    }, apiError.statusCode as ContentfulStatusCode)
+    return c.json(
+      {
+        code: apiError.statusCode,
+        message: apiError.message,
+        data: apiError.data,
+        success: apiError.success,
+      },
+      apiError.statusCode as ContentfulStatusCode
+    )
   })
 
 export type AppType = typeof app

@@ -46,7 +46,10 @@ export type AuthEnv = {
   }
 }
 
-export const verifyAccessToken: MiddlewareHandler<AuthEnv> = async (c: Context<AuthEnv>, next: Next) => {
+export const verifyAccessToken: MiddlewareHandler<AuthEnv> = async (
+  c: Context<AuthEnv>,
+  next: Next
+) => {
   const incomingAccessToken =
     getCookie(c, 'accessToken') || c.req.header('Authorization')?.replace(/^Bearer\s+/i, '')
 
@@ -72,7 +75,10 @@ export const verifyAccessToken: MiddlewareHandler<AuthEnv> = async (c: Context<A
   }
 }
 
-export const verifyRefreshToken: MiddlewareHandler<AuthEnv> = async (c: Context<AuthEnv>, next: Next) => {
+export const verifyRefreshToken: MiddlewareHandler<AuthEnv> = async (
+  c: Context<AuthEnv>,
+  next: Next
+) => {
   const body = await c.req.json().catch(() => ({}))
   const incomingRefreshToken = getCookie(c, 'refreshToken') || body?.refreshToken
 
