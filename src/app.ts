@@ -5,7 +5,9 @@ import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import { logger } from './logger/pino.logger'
-// import all routes
+import NoteRouter from './routes/note'
+import ProjectRouter from './routes/project'
+import TaskRouter from './routes/task'
 import UserRouter from './routes/user'
 import wellKnownRouter from './routes/well-know'
 import { ApiError } from './utils/http'
@@ -50,6 +52,9 @@ const app = new Hono({
   .get('/', c => c.json({ message: 'Authentication API' }))
   .get('health', c => c.json({ status: 'RUNNIG' }))
   .route('/users', UserRouter)
+  .route('/projects', ProjectRouter)
+  .route('/tasks', TaskRouter)
+  .route('/notes', NoteRouter)
   .route('/well-known', wellKnownRouter)
   .notFound(c => {
     return c.json({ message: 'Not found' }, 404)
