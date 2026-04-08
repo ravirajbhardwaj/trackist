@@ -1,8 +1,8 @@
-import fs from 'fs'
+import fs from 'node:fs'
+import path from 'node:path'
 import type { Context, MiddlewareHandler, Next } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { importSPKI, jwtVerify } from 'jose'
-import path from 'path'
 import { ApiError } from '../utils/http'
 
 const __dirname = path.resolve()
@@ -69,8 +69,11 @@ export const verifyAccessToken: MiddlewareHandler<AuthEnv> = async (
 
     c.set('user', payload as AuthUser)
     await next()
-  } catch (error: any) {
-    console.error('Access token verification failed:', error?.message ?? error)
+  } catch (error) {
+    console.error(
+      'Access token verification failed:',
+      error instanceof Error ? error.message : String(error)
+    )
     throw new ApiError(401, 'Invalid or expired access token')
   }
 }
@@ -99,8 +102,11 @@ export const verifyRefreshToken: MiddlewareHandler<AuthEnv> = async (
 
     c.set('user', payload as unknown as AuthUser)
     await next()
-  } catch (error: any) {
-    console.error('Refresh token verification failed:', error?.message ?? error)
+  } catch (error) {
+    console.error(
+      'Refresh token verification failed:',
+      error instanceof Error ? error.message : String(error)
+    )
     throw new ApiError(403, 'Invalid or expired refresh token')
   }
 }
