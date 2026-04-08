@@ -1,7 +1,7 @@
 import { and, eq, gt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { deleteCookie, setCookie } from 'hono/cookie'
-import { USER_COOKIE_TOKEN_EXPIRY, UserLoginType, UserRolesEnum } from '@/constants'
+import { LoginTypesEnum, USER_COOKIE_TOKEN_EXPIRY, UserRolesEnum } from '@/constants'
 import { db } from '@/db'
 import type { User } from '@/db/schema'
 import { usersTable } from '@/db/schema'
@@ -22,14 +22,13 @@ import {
 import { ApiError, ApiResponse } from '@/utils/http'
 import { emailVerificationTemplate, forgotPasswordTemplate, sendMail } from '@/utils/mail.js'
 import {
-  type RegisterData,
-  validateChangePassword,
-  validateEmail,
-  validateLogin,
-  validateRegister,
-  validateResetPassword,
+  changePasswordSchema,
+  emailSchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
 } from '@/validators/auth.validator'
-import { handleZodError } from '@/validators/handleZodError'
+import { zValidator } from '@/validators/zValidator'
 
 export const sanitizeUser = (user: User) => {
   const {
@@ -49,10 +48,8 @@ const userRouter = new Hono<AuthEnv>({ strict: false })
 
 // ─── Unsecure Routes ─────────────────────────────────────────
 
-userRouter.post('/register', async c => {
-  const body: RegisterData = await c.req.json()
-
-  const { fullname, username, email, password, role } = handleZodError(validateRegister(body))
+userRouter.post('/register', zValidator('json', registerSchema), async c => {
+  const { fullname, username, email, password, role } = c.req.valid('json')
   logger.info({ email, username }, `Registration attempt`)
 
   const [existedUser] = await db.select().from(usersTable).where(eq(usersTable.email, email))
@@ -75,7 +72,7 @@ userRouter.post('/register', async c => {
       emailVerificationToken: hashedToken,
       emailVerificationExpiry: tokenExpiry,
       isEmailVerified: false,
-      role: role ?? UserRolesEnum.USER,
+      role: role ?? UserRolesEnum.MEMBER,
     })
     .returning()
 
@@ -110,9 +107,8 @@ userRouter.post('/register', async c => {
   )
 })
 
-userRouter.post('/login', async c => {
-  const body = await c.req.json()
-  const { email, password } = handleZodError(validateLogin(body))
+userRouter.post('/login', zValidator('json', loginSchema), async c => {
+  const { email, password } = c.req.valid('json')
   logger.info({ email }, `Login attempt`)
 
   const [user] = await db
@@ -135,12 +131,12 @@ userRouter.post('/login', async c => {
     throw new ApiError(404, 'User does not exist')
   }
 
-  if (!user.isEmailVerified) {
-    logger.warn({ email }, `Login failed - Email not verified`)
-    throw new ApiError(403, 'Please verify your email before logging in')
-  }
+  // if (!user.isEmailVerified) {
+  //   logger.warn({ email }, `Login failed - Email not verified`)
+  //   throw new ApiError(403, 'Please verify your email before logging in')
+  // }
 
-  if (user.loginType !== UserLoginType.EMAIL) {
+  if (user.loginType !== LoginTypesEnum.EMAIL) {
     logger.warn({ email, type: user.loginType }, `Login failed - Wrong login type`)
     throw new ApiError(
       400,
@@ -359,7 +355,7 @@ userRouter.post('/resend-email-verification', async c => {
 
   const url = new URL(c.req.url)
 
-  await sendMail({
+  sendMail({
     email: user.email,
     subject: 'Please verify your email',
     html: emailVerificationTemplate(
@@ -442,9 +438,8 @@ userRouter.patch('/avatar', async c => {
   return c.json(new ApiResponse(200, { user: updatedUser }, 'Avatar updated successfully'), 201)
 })
 
-userRouter.post('/forgot-password', async c => {
-  const body = await c.req.json()
-  const { email } = handleZodError(validateEmail(body))
+userRouter.post('/forgot-password', zValidator('json', emailSchema), async c => {
+  const { email } = c.req.valid('json')
   logger.info({ email }, `Forgot password request received`)
 
   if (!email) {
@@ -483,19 +478,18 @@ userRouter.post('/forgot-password', async c => {
   return c.json(new ApiResponse(200, {}, 'Mail has been sent to your mail ID'), 200)
 })
 
-userRouter.post('/reset-password/:resetToken', async c => {
-  const resetToken = c.req.param('resetToken')
-  const body = await c.req.json()
-  const { password } = handleZodError(validateResetPassword(body))
+userRouter.put('/reset-password/:token', zValidator('json', resetPasswordSchema), async c => {
+  const token = c.req.param('token')
+  const { password } = c.req.valid('json')
 
   logger.info(`Reset forgotten password attempt`)
 
-  if (!resetToken && !password) {
+  if (!token && !password) {
     logger.warn(`Reset password failed - Missing token or password`)
     throw new ApiError(400, 'Invalid reset token and new Password')
   }
 
-  const hashedToken = await createHash(resetToken as string)
+  const hashedToken = await createHash(token as string)
 
   const [user] = await db
     .select({
@@ -529,44 +523,50 @@ userRouter.post('/reset-password/:resetToken', async c => {
 
   return c.json(new ApiResponse(201, {}, 'Password reset successfully'), 200)
 })
+userRouter.put(
+  '/change-password',
+  zValidator('json', changePasswordSchema),
+  verifyAccessToken,
+  async c => {
+    const { currentPassword, newPassword } = c.req.valid('json')
+    const userId = c.get('user')._id
 
-userRouter.post('/change-password', async c => {
-  const body = await c.req.json()
-  const { currentPassword, newPassword } = handleZodError(validateChangePassword(body))
-  const userId = c.get('user')._id
+    logger.info({ userId }, `Change password attempt`)
 
-  logger.info({ userId }, `Change password attempt`)
+    if (!currentPassword || !newPassword) {
+      logger.warn({ userId }, `Change password failed - Missing fields`)
+      throw new ApiError(400, 'Current Password and New Password is required')
+    }
 
-  if (!currentPassword || !newPassword) {
-    logger.warn({ userId }, `Change password failed - Missing fields`)
-    throw new ApiError(400, 'Current Password and New Password is required')
+    const [user] = await db
+      .select({ id: usersTable.id, password: usersTable.password })
+      .from(usersTable)
+      .where(eq(usersTable.id, userId))
+
+    if (!user) {
+      logger.warn({ userId }, `Change password failed - User not found`)
+      throw new ApiError(404, 'User does not exist')
+    }
+
+    const isPasswordMatch = await passwordMatch(currentPassword, user.password)
+
+    if (!isPasswordMatch) {
+      logger.warn({ userId }, `Change password failed - Invalid current password`)
+      throw new ApiError(400, 'Invalid current password')
+    }
+
+    const hashedNewPassword = await hashPassword(newPassword)
+
+    await db
+      .update(usersTable)
+      .set({ password: hashedNewPassword })
+      .where(eq(usersTable.id, user.id))
+
+    logger.info({ userId: user.id }, `Password changed successfully`)
+
+    return c.json(new ApiResponse(201, {}, 'Password changed successfully'), 200)
   }
-
-  const [user] = await db
-    .select({ id: usersTable.id, password: usersTable.password })
-    .from(usersTable)
-    .where(eq(usersTable.id, userId))
-
-  if (!user) {
-    logger.warn({ userId }, `Change password failed - User not found`)
-    throw new ApiError(404, 'User does not exist')
-  }
-
-  const isPasswordMatch = await passwordMatch(currentPassword, user.password)
-
-  if (!isPasswordMatch) {
-    logger.warn({ userId }, `Change password failed - Invalid current password`)
-    throw new ApiError(400, 'Invalid current password')
-  }
-
-  const hashedNewPassword = await hashPassword(newPassword)
-
-  await db.update(usersTable).set({ password: hashedNewPassword }).where(eq(usersTable.id, user.id))
-
-  logger.info({ userId: user.id }, `Password changed successfully`)
-
-  return c.json(new ApiResponse(201, {}, 'Password changed successfully'), 200)
-})
+)
 
 userRouter.post('/assign-role/:userId', verifyPermission([UserRolesEnum.ADMIN]), async c => {
   const userId = c.req.param('userId')
