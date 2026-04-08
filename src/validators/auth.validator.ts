@@ -9,7 +9,7 @@ const strongPassword = z
       'Password must contain at least one uppercase letter, one lowercase letter, number and one special character.',
   })
 
-const registerSchema = z.object({
+export const registerSchema = z.object({
   username: z
     .string()
     .nonempty()
@@ -20,19 +20,19 @@ const registerSchema = z.object({
     .max(15, { message: 'Fullname must be at most 15 characters long' }),
   email: z.string().nonempty().email({ message: 'Invalid email address' }),
   password: strongPassword,
-  role: z.enum(['ADMIN', 'USER']),
+  role: z.enum(['ADMIN', 'MEMBER', 'VIEWER']).optional(),
 })
 
-const loginSchema = registerSchema.pick({
+export const loginSchema = registerSchema.pick({
   email: true,
   password: true,
 })
 
-const emailSchema = registerSchema.pick({
+export const emailSchema = registerSchema.pick({
   email: true,
 })
 
-const changePasswordSchema = z
+export const changePasswordSchema = z
   .object({
     currentPassword: strongPassword,
     newPassword: strongPassword,
@@ -43,7 +43,7 @@ const changePasswordSchema = z
     path: ['confirmNewPassword'],
   })
 
-const resetPasswordSchema = z
+export const resetPasswordSchema = z
   .object({
     password: strongPassword,
     confirmPassword: z.string(),

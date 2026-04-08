@@ -17,9 +17,13 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "fmt": "biome check --write ./src"
+    "fmt": "biome check --write ./src",
+    "db:generate": "bunx drizzle-kit generate",
+    "db:push": "bunx drizzle-kit push",
+    "db:studio": "bunx drizzle-kit studio"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.6",
     "@neondatabase/serverless": "^1.0.2",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.1",
