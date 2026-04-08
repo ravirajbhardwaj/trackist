@@ -1,0 +1,130 @@
+Copy the content of `eraserSchema.txt` into the Eraser editor to visualize the database design. 
+This schema models a task management app with users, projects, team members, tasks, subtasks, and notes.
+
+--- start schema -------------------------------------
+
+title Task Manager DB design
+notation chen
+colorMode pastel
+typeface mono
+
+enum UserRole [icon: user, color: blue] {
+  ADMIN: "ADMIN"
+  MEMBER: "MEMBER"
+  VIEWER: "VIEWER"
+}
+
+enum LoginType [icon: user, color: blue] {
+  EMAIL: "EMAIL"
+  GITHUB: "GITHUB"
+}
+
+enum Priority [icon: folder, color: orange] {
+  LOW: "LOW"
+  MEDIUM: "MEDIUM"
+  HIGH: "HIGH"
+  URGENT: " URGENT"
+}
+
+enum Status [icon: folder, color: orange] {
+  TODO: "TODO"
+  IN_PROGRESS: "IN_PROGRESS"
+  DONE: "DONE"
+}
+
+enum Members [icon: users, color: green] {
+  LEADER: "LEADER"
+  MANAGER: "MANAGER"
+  DEVELOPER: "DEVELOPER"
+  DESIGNER: "DESIGNER"
+  TESTER: "TESTER"
+  INTERN: "INTERN"
+  CONTRIBUTOR: "CONTRIBUTOR"
+}
+
+users [icon: user, color: blue, ] {
+  id ObjectId pk
+  avatar string
+  username string @unique
+  email string @unique
+  password string (hashed)
+  role UserRole (default: USER)
+  isEmailVerified boolean (default: false)
+  loginType LoginType (default: EMAIL)
+  refreshToken string
+  forgetPasswordToken string (hashed)
+  forgetPasswordExpiry date
+  emailVarificationToken string (hashed)
+  emailVarificationExpiry date
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+projects [icon: folder, color: red] {
+  id ObjectId pk
+  name string
+  description string
+  createdBy ObjectId users
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+teamMembers [icon: users, color: green] {
+  id ObjectId pk
+  user ObjectId users
+  project ObjectId projects
+  role Members default(LEADER)
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+tasks [icon: workflow, color: orange] {
+  id ObjectId pk
+  title string
+  description string
+  priority Priority @default(MEDIUM)
+  project ObjectId projects
+  assignedTo ObjectId users
+  assignedBy ObjectId users
+  status Status @default(TODO)
+  attachments string[]
+  createdAt timestamp
+  updatedAt timestamp 
+}
+
+subtasks [icon: api, color: yellow ] {
+  id ObjectId pk
+  title string
+  task ObjectId tasks
+  isCompleted boolean default(false)
+  createdBy ObjectId users
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+notes [icon: file, color: teal] {
+  id ObjectId pk
+  project ObjectId projects
+  createdBy ObjectId users
+  content string
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+// relationship
+// user related
+projects.createdBy > users.id : [color: red]
+teamMembers.user > users.id: [color: green]
+tasks.assignedBy > users.id: [color: orange]
+tasks.assignedTo > users.id: [color: orange]
+notes.createdBy > users.id: [color: teal]
+
+// project related
+teamMembers.project > projects.id: [color: green]
+tasks.project > projects.id: [color: orange]
+notes.project > projects.id: [color: teal]
+
+// task realted
+subtasks.task > tasks.id: [color: yellow]
+
+---- end of schema ----------------------------------------------------

@@ -8,11 +8,10 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
 [![Bun](https://img.shields.io/badge/Bun-000000.svg?logo=bun&logoColor=white)](https://bun.sh/)
-[![Hono](https://img.shields.io/badge/Hono-E36002.svg?logo=hono&logoColor=white)](https://hono.dev/)
-[![Express](https://img.shields.io/badge/Express-000000.svg?logo=express&logoColor=white)](https://expressjs.com/)
+[![Hono](https://img.shields.io/badge/Hono-E36002.svg?logo=hono&logoColor=green)](https://hono.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Neon](https://img.shields.io/badge/Neon-04C7C1.svg?logo=neon&logoColor=white)](https://neon.tech/)
-[![Prisma](https://img.shields.io/badge/Prisma-3982CE.svg?logo=Prisma&logoColor=white)](https://www.prisma.io/)
+[![Drizzle](https://img.shields.io/badge/Drizzle-3E67B1.svg?logo=Drizzle&logoColor=white)](https://www.drizzleorm.com/)
 [![Resend](https://img.shields.io/badge/Resend-000000.svg?logo=resend&logoColor=white)](https://resend.com/)
 [![JWT](https://img.shields.io/badge/JWT-000000.svg?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
 [![Zod](https://img.shields.io/badge/Zod-3E67B1.svg?logo=zod&logoColor=white)](https://zod.dev/)
@@ -24,7 +23,7 @@ Trackist is a simple, efficient task management tool built to help individuals a
 <br/>
 
 ![DB Design](./assets/images/eraserSchema.svg)
-[eraserSchema.txt](./backend/eraserSchema.txt)
+[model.txt](./model.txt)
 
 ### Install dependencies
 
@@ -46,23 +45,7 @@ Make sure you have the following installed on your machine:
 
 ```bash
 cd trackist
-pnpm install
-```
-
-### 3. Set up environment variables
-
-Create `.env` files in the server and client folder and copy paste the content of `.env.sample`
-
-```bash
-# server side
-cd backend
-cp .env.eample .env # then update `.env` with your creadentials.
-cd ..
-
-# client side
-cd frontend
-cp .env.emaple .env # then update `.env` if required.
-cd ..
+bun install
 ```
 
 ### 3. Set up environment variables
@@ -122,13 +105,13 @@ mkdir secrets
    Development mode
 
    ```bash
-   pnpm run dev
+   bun run dev
    ```
 
    Production mode
 
    ```bash
-   pnpm start
+   bun start
    ```
 
 ---
@@ -165,4 +148,4 @@ Import the collection into Postman and set the environment variables like `serve
 
 [Ravi Raj Bhardwaj](http://x.com/ravirajbhrdwaj)
 
-Built with ❤️ to simplify auth flows and speed up backend development.
+Built with ❤️ to help individuals and teams stay organized and productive. Feel free to contribute, report issues, or suggest features!
